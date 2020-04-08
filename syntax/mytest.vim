@@ -10,49 +10,86 @@ setlocal isident=.,-,48-58,A-Z,a-z,_
 syn sync fromstart
 let s:save_cpo = &cpoptions
 set cpoptions-=C
-hi link xyz_AML_Nested_Semicolon Operator
-hi link xyz_Semicolon Todo
-hi link xyz_Number    Special
-hi link xyz_ACLIdent  Include
-hi link xyz_Keywords  Statement
-hi link xyz_AML  Error
+hi link namedA_Semicolon Todo
 
-syn match xyz_Semicolon contained /;/ 
+hi link namedA_AML_Nested_Not_Operator Type
+hi link namedA_AML_Nested_Semicolon DiffChange
 
-syn match xyz_AML_Nested_Semicolon contained /;/ skipwhite skipempty 
+hi link namedA_AML_Not_Operator Operator
+hi link namedA_AML_Number    Special
+hi link namedA_AML_ACLIdent  Include
+hi link namedA_AML_Keywords  Statement
+" hi link namedA_AML  Error
+
+syn match namedA_Semicolon contained /;/ 
+
+syn match namedA_AML_Nested_Semicolon contained /;/ skipwhite skipempty 
 \ nextgroup=
-\    xyz_AML_Placeholder
+\    namedA_AML_Recursive,
+\    namedA_AML_Nested_Not_Operator
 
-syn match xyz_Number "\<\d\{1,10}\>" skipwhite skipempty
+hi link namedE_NotSemicolon Error
+syn match namedE_NotSemicolon contained /[^;]\+/he=e-1 skipwhite skipempty
+hi link namedE_PrematureRBrace Error
+syn match namedE_PrematureRBrace contained /[^;]\+{/he=e-1 skipwhite skipempty
+
+
+
+syn match namedA_AML_Not_Operator contained /!/ skipwhite skipempty
 \ nextgroup=
-\    xyz_AML_Nested_Semicolon
+\    namedA_AML
 
-syn region xyz_AML_Placeholder contained start=+{+ end=+}+ keepend extend
+syn match namedA_AML_Nested_Not_Operator contained /!/ skipwhite skipempty
+\ nextgroup=
+\    namedA_AML_Recursive,
+\    namedA_AML_Number,
+\    namedA_AML_Name
+
+syn match namedA_AML_Name "\<[a-zA-Z\.\-_]\{1,63}\>" skipwhite skipempty
+\ nextgroup=
+\    namedA_AML_Nested_Semicolon,
+\    namedE_NotSemicolon,
+
+syn match namedA_AML_Number "\<\d\{1,10}\>" skipwhite skipempty
+\ nextgroup=namedA_AML_Nested_Semicolon
+
+
+
+syn region namedA_AML_Recursive contained start=+{+ end=+}+ keepend extend
 \ contains=
-\    xyz_Number,
-\    xyz_AML_Nested_Semicolon
+\    namedA_AML_Name,
+\    namedA_AML_Number,
+\    namedA_AML_Nested_Semicolon,
+\    namedA_AML_Nested_Not_Operator
 \ nextgroup=
-\    xyz_AML_Nested_Semicolon
+\    namedA_AML_Nested_Semicolon,
+\    namedE_NotSemicolon,
 
 " acl <acl_name> { ... } ;
-syn region xyz_AML contained start=+{+ end=+}+  skipwhite skipempty
+syn region namedA_AML contained start=+{+ end=+}+  skipwhite skipempty
 \ contains=
-\    xyz_Number,
-\    xyz_AML_Nested_Semicolon
+\    namedA_AML_Name,
+\    namedA_AML_Number,
+\    namedA_AML_Nested_Semicolon,
+\    namedA_AML_Nested_Not_Operator
 \ nextgroup=
-\    xyz_Semicolon
+\    namedA_Semicolon,
+\    namedE_NotSemicolon
 
 " acl <acl_name> { ... } 
-syn match xyz_ACLIdent contained /\<[0-9a-zA-Z\-_]\{1,63}\>/ skipwhite skipempty
+syn match namedA_AML_ACLIdent contained /\<[0-9a-zA-Z\-_]\{1,63}\>/ skipwhite skipempty
 \ nextgroup=
-\    xyz_AML
+\    namedA_AML,
+\    namedA_AML_Not_Operator
 
 " acl <acl_name> ...
-syn match xyz_Keywords /acl/ skipwhite skipempty
-\ nextgroup=xyz_ACLIdent
+syn keyword namedA_AML_Keywords skipwhite skipempty
+\ acl
+\ test2
+\ nextgroup=namedA_AML_ACLIdent
 
-syn match xyz_Keywords /test/ skipwhite skipempty
-\ nextgroup=xyz_Number
+syn match namedA_AML_Keywords /test/ skipwhite skipempty
+\ nextgroup=namedA_AML_Number
 
 let &cpoptions = s:save_cpo
 unlet s:save_cpo
