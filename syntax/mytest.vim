@@ -48,7 +48,7 @@ syn match namedE_MissingSemicolon contained /[ \n\r]*\zs[^;]*/
 
 
 
-syn match namedA_Semicolon contained /;/ 
+syn match namedA_Semicolon contained /;/ skipwhite skipempty
 
 syn match namedA_AML_Nested_Semicolon contained /;/ skipwhite skipempty 
 \ nextgroup=
@@ -97,6 +97,7 @@ syn region namedA_AML_Recursive contained start=+{+ end=+}+ keepend extend
 
 " acl <acl_name> { ... } ;
 syn region namedA_AML contained start=+{+ end=+}+  
+\ skipwhite skipnl skipempty
 \ contains=
 \    namedA_AML_Name,
 \    namedA_AML_Number,
